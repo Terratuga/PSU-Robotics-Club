@@ -147,12 +147,12 @@ void setup(){
 
   //Load the battery voltage to the battery_voltage variable.
   //65 is the voltage compensation for the diode.
-  //12.6V equals ~5V @ Analog 0.
-  //12.6V equals 1023 analogRead(0).
-  //1260 / 1023 = 1.2317.
+  //16.8V equals ~5V @ Analog 0.                                            // need to fix
+  //16.8V equals 1023 analogRead(0).
+  //16.8 / 1023 = 1.642228739002933.
   //The variable battery_voltage holds 1050 if the battery voltage is 10.5V.
 
-  battery_voltage = (analogRead(0) + 65) * 1.2317;
+  battery_voltage = (analogRead(0) + 65) * 1.642228739002933;
 
   loop_timer = micros();                                                    //Set the timer for the next loop.
 
@@ -266,11 +266,11 @@ void loop(){
 
   //The battery voltage is needed for compensation.
   //A complementary filter is used to reduce noise.
-  //0.09853 = 0.08 * 1.2317.
-  battery_voltage = battery_voltage * 0.92 + (analogRead(0) + 65) * 0.09853;
+  //0.131378 = 0.08 * 1.642228739002933.
+  battery_voltage = battery_voltage * 0.92 + (analogRead(0) + 65) * 0.131378;
 
   //Turn on the led if battery voltage is to low.
-  if(battery_voltage < 1280 && battery_voltage > 800)digitalWrite(12, HIGH);
+  //if(battery_voltage < 1280 && battery_voltage > 800)digitalWrite(12, HIGH); // Not needed
 
 
   throttle = receiver_input_channel_3;                                      //We need the throttle signal as a base signal.
