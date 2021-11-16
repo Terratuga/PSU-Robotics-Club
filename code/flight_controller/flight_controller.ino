@@ -147,7 +147,7 @@ void setup(){
 
   //Load the battery voltage to the battery_voltage variable.
   //65 is the voltage compensation for the diode.
-  //16.8V equals ~5V @ Analog 0.                                            // need to fix
+  //16.8V equals ~5V @ Analog 0.                                            // need to fix resistors to 3.33 times divider
   //16.8V equals 1023 analogRead(0).
   //16.8 / 1023 = 1.642228739002933.
   //The variable battery_voltage holds 1050 if the battery voltage is 10.5V.
