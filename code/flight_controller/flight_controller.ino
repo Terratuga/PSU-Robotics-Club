@@ -265,7 +265,7 @@ void loop(){
 
   //The battery voltage is needed for compensation.
   //A complementary filter is used to reduce noise.
-  //0.131378 = 0.08 * 1.642229.
+  //0.131378 = 0.08 * 1.642229. old values
   
   battery_voltage = battery_voltage * 0.92 + (analogRead(0)) * .137242;
   //Serial.println(battery_voltage);
@@ -287,10 +287,10 @@ void loop(){
     esc_4 = throttle - pid_output_pitch - pid_output_roll + pid_output_yaw; //Calculate the pulse for esc 4 (front-left - CW)
     }
     else{// if low throttle, get values from throttle input
-    esc_1 = throttle; 
-    esc_2 = throttle; 
-    esc_3 = throttle; 
-    esc_4 = throttle; 
+    esc_1 = throttle;                                                       //sets esc to throttle value
+    esc_2 = throttle;                                                       //sets esc to throttle value
+    esc_3 = throttle;                                                       //sets esc to throttle value
+    esc_4 = throttle;                                                       //sets esc to throttle value
     }
 
     if (battery_voltage < 1680 && battery_voltage > 1280){                   //Is the battery connected?
@@ -354,7 +354,7 @@ void loop(){
     if(timer_channel_3 <= esc_loop_timer)PORTD &= B10111111;                //Set digital output 6 to low if the time is expired.
     if(timer_channel_4 <= esc_loop_timer)PORTD &= B01111111;                //Set digital output 7 to low if the time is expired.
   }
-
+  //output values being sent to ESC
   Serial.print("ESC 1: ");
   Serial.print(esc_1);
   Serial.print("  ESC 2: ");

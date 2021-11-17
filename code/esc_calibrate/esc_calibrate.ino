@@ -244,9 +244,9 @@ void loop(){
           Serial.print(".");
         }
         gyro_signalen();                                                                //Read the gyro output.
-        gyro_axis_cal[1] += gyro_axis[1];                                               //Ad roll value to gyro_roll_cal.
-        gyro_axis_cal[2] += gyro_axis[2];                                               //Ad pitch value to gyro_pitch_cal.
-        gyro_axis_cal[3] += gyro_axis[3];                                               //Ad yaw value to gyro_yaw_cal.
+        gyro_axis_cal[1] += gyro_axis[1];                                               //Add roll value to gyro_roll_cal.
+        gyro_axis_cal[2] += gyro_axis[2];                                               //Add pitch value to gyro_pitch_cal.
+        gyro_axis_cal[3] += gyro_axis[3];                                               //Add yaw value to gyro_yaw_cal.
         //We don't want the esc's to be beeping annoyingly. So let's give them a 1000us puls while calibrating the gyro.
         PORTD |= B11110000;                                                             //Set digital poort 4, 5, 6 and 7 high.
         delayMicroseconds(1000);                                                        //Wait 1000us.
@@ -274,8 +274,8 @@ void loop(){
       angle_roll += gyro_roll * 0.0000611;                                             //Calculate the traveled roll angle and add this to the angle_roll variable.
 
       //0.000001066 = 0.0000611 * (3.142(PI) / 180degr) The Arduino sin function is in radians
-      angle_pitch -= angle_roll * sin(gyro_yaw * 0.000001066);                         //If the IMU has yawed transfer the roll angle to the pitch angel.
-      angle_roll += angle_pitch * sin(gyro_yaw * 0.000001066);                         //If the IMU has yawed transfer the pitch angle to the roll angel.
+      angle_pitch -= angle_roll * sin(gyro_yaw * 0.000001066);                         //If the IMU has yawed transfer the roll angle to the pitch angle.
+      angle_roll += angle_pitch * sin(gyro_yaw * 0.000001066);                         //If the IMU has yawed transfer the pitch angle to the roll angle.
 
       //Accelerometer angle calculations
       acc_total_vector[0] = sqrt((acc_x*acc_x)+(acc_y*acc_y)+(acc_z*acc_z));           //Calculate the total accelerometer vector.
