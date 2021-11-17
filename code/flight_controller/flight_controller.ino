@@ -71,7 +71,7 @@ boolean gyro_angles_set;
 //Setup routine
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void setup(){
-  //Serial.begin(57600);
+  Serial.begin(57600);
   //Copy the EEPROM data for fast access data.
   for(start = 0; start <= 35; start++)eeprom_data[start] = EEPROM.read(start);
   start = 0;                                                                //Set start back to zero.
@@ -149,11 +149,10 @@ void setup(){
   //65 is the voltage compensation for the diode.
   //16.8V equals ~5V @ Analog 0.                                            // need to fix resistors to 3.33 times divider
   //16.8V equals 1023 analogRead(0).
-  //16.8 / 1023 = 1.642228739002933.
+  //16.8 / 1023 = 1.642229.
   //The variable battery_voltage holds 1050 if the battery voltage is 10.5V.
 
-  battery_voltage = (analogRead(0) + 65) * 1.642228739002933;
-
+  battery_voltage = (analogRead(0)) * 1.71553;//1.642229
   loop_timer = micros();                                                    //Set the timer for the next loop.
 
   //When everything is done, turn off the led.
@@ -266,21 +265,33 @@ void loop(){
 
   //The battery voltage is needed for compensation.
   //A complementary filter is used to reduce noise.
-  //0.131378 = 0.08 * 1.642228739002933.
-  battery_voltage = battery_voltage * 0.92 + (analogRead(0) + 65) * 0.131378;
-
+  //0.131378 = 0.08 * 1.642229.
+  
+  battery_voltage = battery_voltage * 0.92 + (analogRead(0)) * .137242;
+  //Serial.println(battery_voltage);
+  
   //Turn on the led if battery voltage is to low.
   //if(battery_voltage < 1280 && battery_voltage > 800)digitalWrite(12, HIGH); // Not needed
 
 
   throttle = receiver_input_channel_3;                                      //We need the throttle signal as a base signal.
-
+  //Serial.println(throttle);
+  
   if (start == 2){                                                          //The motors are started.
-    if (throttle > 1600) throttle = 1600;                                   //We need some room to keep full control at full throttle.
+    if (throttle > 1600) throttle = 1600;  //We need some room to keep full control at full throttle.
+    
+    if (throttle > 1020){// added if so low throttle does not start PID
     esc_1 = throttle - pid_output_pitch + pid_output_roll - pid_output_yaw; //Calculate the pulse for esc 1 (front-right - CCW)
     esc_2 = throttle + pid_output_pitch + pid_output_roll + pid_output_yaw; //Calculate the pulse for esc 2 (rear-right - CW)
     esc_3 = throttle + pid_output_pitch - pid_output_roll - pid_output_yaw; //Calculate the pulse for esc 3 (rear-left - CCW)
     esc_4 = throttle - pid_output_pitch - pid_output_roll + pid_output_yaw; //Calculate the pulse for esc 4 (front-left - CW)
+    }
+    else{// if low throttle, get values from throttle input
+    esc_1 = throttle; 
+    esc_2 = throttle; 
+    esc_3 = throttle; 
+    esc_4 = throttle; 
+    }
 
     if (battery_voltage < 1680 && battery_voltage > 1280){                   //Is the battery connected?
       esc_1 += esc_1 * ((1680 - battery_voltage)/(float)3500);              //Compensate the esc-1 pulse for voltage drop.
@@ -289,15 +300,15 @@ void loop(){
       esc_4 += esc_4 * ((1680 - battery_voltage)/(float)3500);              //Compensate the esc-4 pulse for voltage drop.
     } 
 
-    if (esc_1 < 1100) esc_1 = 1100;                                         //Keep the motors running.
-    if (esc_2 < 1100) esc_2 = 1100;                                         //Keep the motors running.
-    if (esc_3 < 1100) esc_3 = 1100;                                         //Keep the motors running.
-    if (esc_4 < 1100) esc_4 = 1100;                                         //Keep the motors running.
+    if (esc_1 < 1010) esc_1 = 1010;                                         //Keep the motors running.
+    if (esc_2 < 1010) esc_2 = 1010;                                         //Keep the motors running.
+    if (esc_3 < 1010) esc_3 = 1010;                                         //Keep the motors running.
+    if (esc_4 < 1010) esc_4 = 1010;                                         //Keep the motors running.
 
-    if(esc_1 > 1600)esc_1 = 1600;                                           //Limit the esc-1 pulse to 2000us.
-    if(esc_2 > 1600)esc_2 = 1600;                                           //Limit the esc-2 pulse to 2000us.
-    if(esc_3 > 1600)esc_3 = 1600;                                           //Limit the esc-3 pulse to 2000us.
-    if(esc_4 > 1600)esc_4 = 1600;                                           //Limit the esc-4 pulse to 2000us.  
+    if(esc_1 > 1600)esc_1 = 1600;                                           //Limit the esc-1 pulse to 1600us.
+    if(esc_2 > 1600)esc_2 = 1600;                                           //Limit the esc-2 pulse to 1600us.
+    if(esc_3 > 1600)esc_3 = 1600;                                           //Limit the esc-3 pulse to 1600us.
+    if(esc_4 > 1600)esc_4 = 1600;                                           //Limit the esc-4 pulse to 1600us.  
   }
 
   else{
@@ -343,6 +354,15 @@ void loop(){
     if(timer_channel_3 <= esc_loop_timer)PORTD &= B10111111;                //Set digital output 6 to low if the time is expired.
     if(timer_channel_4 <= esc_loop_timer)PORTD &= B01111111;                //Set digital output 7 to low if the time is expired.
   }
+
+  Serial.print("ESC 1: ");
+  Serial.print(esc_1);
+  Serial.print("  ESC 2: ");
+  Serial.print(esc_2);
+  Serial.print("  ESC 3: ");
+  Serial.print(esc_3);
+  Serial.print("  ESC 4: ");
+  Serial.println(esc_4);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -556,4 +576,3 @@ void set_gyro_registers(){
 
   }  
 }
-

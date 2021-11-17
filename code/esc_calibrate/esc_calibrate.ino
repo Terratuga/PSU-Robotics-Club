@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 //The program will start in calibration mode.
 //Send the following characters / numbers via the serial monitor to change the mode
-//
+
 //r = print receiver signals.
 //a = print quadcopter angles.
 //1 = check rotation / vibrations for motor 1 (right front CCW).
