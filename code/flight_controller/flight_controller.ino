@@ -21,20 +21,20 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PID gain and limit settings
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float pid_p_gain_roll = 1.3;               //Gain setting for the roll P-controller
-float pid_i_gain_roll = 0.04;              //Gain setting for the roll I-controller
-float pid_d_gain_roll = 18.0;              //Gain setting for the roll D-controller
-int pid_max_roll = 200;                    //Maximum output of the PID-controller (+/-)
+float pid_p_gain_roll = 0;               //Gain setting for the roll P-controller //1.3
+float pid_i_gain_roll = 0;              //Gain setting for the roll I-controller //0.04
+float pid_d_gain_roll = 0;              //Gain setting for the roll D-controller //18.0
+int pid_max_roll = 400;                    //Maximum output of the PID-controller (+/-) 
 
 float pid_p_gain_pitch = pid_p_gain_roll;  //Gain setting for the pitch P-controller.
 float pid_i_gain_pitch = pid_i_gain_roll;  //Gain setting for the pitch I-controller.
 float pid_d_gain_pitch = pid_d_gain_roll;  //Gain setting for the pitch D-controller.
 int pid_max_pitch = pid_max_roll;          //Maximum output of the PID-controller (+/-)
 
-float pid_p_gain_yaw = 4.0;                //Gain setting for the pitch P-controller. //4.0
+float pid_p_gain_yaw = 3;                //Gain setting for the pitch P-controller. //4.0
 float pid_i_gain_yaw = 0.02;               //Gain setting for the pitch I-controller. //0.02
-float pid_d_gain_yaw = 0.0;                //Gain setting for the pitch D-controller.
-int pid_max_yaw = 200;                     //Maximum output of the PID-controller (+/-)
+float pid_d_gain_yaw = 0;                //Gain setting for the pitch D-controller. // 0.0
+int pid_max_yaw = 400;                     //Maximum output of the PID-controller (+/-) 
 
 boolean auto_level = true;                 //Auto level on (true) or off (false)
 
@@ -117,7 +117,7 @@ void setup(){
     PORTD &= B00001111;                                                     //Set digital poort 4, 5, 6 and 7 low.
     delay(3);                                                               //Wait 3 milliseconds before the next loop.
   }
-  //Now that we have 2000 measures, we need to devide by 2000 to get the average gyro offset.
+  //Now that we have 2000 measures, we need to divide by 2000 to get the average gyro offset.
   gyro_axis_cal[1] /= 2000;                                                 //Divide the roll total by 2000.
   gyro_axis_cal[2] /= 2000;                                                 //Divide the pitch total by 2000.
   gyro_axis_cal[3] /= 2000;                                                 //Divide the yaw total by 2000.
@@ -162,6 +162,15 @@ void setup(){
 //Main program loop
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(){
+
+
+  if(start == 2){
+  Serial.print(gyro_roll,0);
+  Serial.print(";");
+  Serial.print(gyro_pitch,0);
+  Serial.print(";");
+  Serial.println(gyro_yaw,0);
+  }
 
   //65.5 = 1 deg/sec (check the datasheet of the MPU-6050 for more information).
   gyro_roll_input = (gyro_roll_input * 0.7) + ((gyro_roll / 65.5) * 0.3);   //Gyro pid input is deg/sec.
@@ -354,15 +363,16 @@ void loop(){
     if(timer_channel_3 <= esc_loop_timer)PORTD &= B10111111;                //Set digital output 6 to low if the time is expired.
     if(timer_channel_4 <= esc_loop_timer)PORTD &= B01111111;                //Set digital output 7 to low if the time is expired.
   }
-  //output values being sent to ESC
-  Serial.print("ESC 1: ");
-  Serial.print(esc_1);
-  Serial.print("  ESC 2: ");
-  Serial.print(esc_2);
-  Serial.print("  ESC 3: ");
-  Serial.print(esc_3);
-  Serial.print("  ESC 4: ");
-  Serial.println(esc_4);
+
+  //output values being sent to ESC 
+  //Serial.print("ESC 1: ");
+  //Serial.print(esc_1);
+  //Serial.print("  ESC 2: ");
+  //Serial.print(esc_2);
+  //Serial.print("  ESC 3: ");
+  //Serial.print(esc_3);
+  //Serial.print("  ESC 4: ");
+  //Serial.println(esc_4);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
