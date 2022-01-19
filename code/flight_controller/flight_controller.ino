@@ -21,9 +21,9 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PID gain and limit settings
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float pid_p_gain_roll = 0;               //Gain setting for the roll P-controller //1.3
-float pid_i_gain_roll = 0;              //Gain setting for the roll I-controller //0.04
-float pid_d_gain_roll = 0;              //Gain setting for the roll D-controller //18.0
+float pid_p_gain_roll = .2;               //Gain setting for the roll P-controller //1.3
+float pid_i_gain_roll = .01;              //Gain setting for the roll I-controller //0.04
+float pid_d_gain_roll = 18;              //Gain setting for the roll D-controller //18.0
 int pid_max_roll = 400;                    //Maximum output of the PID-controller (+/-) 
 
 float pid_p_gain_pitch = pid_p_gain_roll;  //Gain setting for the pitch P-controller.
